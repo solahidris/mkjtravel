@@ -1,10 +1,20 @@
 // pages/index.js
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { PiCloudSunBold } from "react-icons/pi";
+import { FaPerson, FaChild,FaBabyCarriage } from "react-icons/fa6";
+
 
 type ItineraryData = {
-  days: string[];
-  [key: number]: string; // Assuming other data fields are indexed by numbers
+  guideName: string;
+  clientName: string;
+  package: string;
+  clientPax: string;
+  flightLink: string;
+  remarks: string;
+  dateStart: string;
+  dateEnd: string;
+  itenaryDetails: { [key: string]: string };
 };
 
 export default function PDFPage() {
@@ -13,15 +23,38 @@ export default function PDFPage() {
   const [data, setData] = useState<ItineraryData | null>(null);
 
   // Helper function to format the number of passengers
-  const formatPax = (paxNumber: number | undefined) => {
-    if (typeof paxNumber !== 'number') {
-      return 'Invalid passenger data';
+  const formatPax = (paxNumber: string | undefined) => {
+    if (!paxNumber || isNaN(Number(paxNumber))) {
+      return "Invalid passenger data";
     }
-    
     const paxString = paxNumber.toString();
-    const [adults, children, infants] = paxString.split('').map(Number);
+    const [adults, children, infants] = paxString.split("").map(Number);
     const totalPax = adults + children + infants;
-    return `${adults} adults${children > 0 ? ` + ${children} children` : ''}${infants > 0 ? ` + ${infants} infant` : ''} (${totalPax} pax)`;
+    return (
+      <div className="flex gap-4">
+        <div className="flex gap-2 font-medium">
+          <div className="flex items-center gap-0.5">{`${adults}`}<FaPerson className="w-4 h-4"/></div>
+          {children > 0 && <div className="flex items-center gap-0.5">{` ${children}`}<FaChild className="w-4 h-4"/></div>}
+          {infants > 0 && <div className="flex items-center gap-2">{` ${infants}`}<FaBabyCarriage className="w-4 h-4"/></div>}
+        </div>
+        {`(${totalPax} pax)`}
+      </div>
+    );
+  };
+
+  // Helper function to format date as DD/MM
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}/${month}`;
+  };
+
+  // Helper function to add days to a date
+  const addDays = (date: Date, days: number) => {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
   };
 
   useEffect(() => {
@@ -38,9 +71,14 @@ export default function PDFPage() {
 
   if (!data) return <p>Loading...</p>;
 
+  const startDate = new Date(data.dateStart);
+  const endDate = new Date(data.dateEnd);
+  const numberOfDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24))+1;
+
+
   return (
     <div className="overflow-hidden">
-      <div className="w-full max-w-[190mm] min-h-screen mx-auto p-[20mm] bg-white border border-gray-300 font-sans leading-relaxed break-after-page">
+      <div className="w-full max-w-[190mm] min-h-screen mx-auto p-[20mm] bg-white border border-gray-300 font-sans leading-relaxed">
         {/* Header Banner and Logo */}
         <div className="relative top-[-20mm] left-[-20mm] w-[190mm]">
           <img
@@ -55,7 +93,7 @@ export default function PDFPage() {
             alt="banner"
             width={100}
             height={100}
-            className="w-28 absolute top-28 right-10"
+            className="w-28 absolute top-28 right-20"
           />
         </div>
 
@@ -66,25 +104,35 @@ export default function PDFPage() {
           <div className="flex flex-col rounded-lg p-4 border border-gray-300">
             <div className="grid grid-cols-4">
               <strong className="col-span-1 border-r mr-4">Guide Name</strong>
-              <p className="col-span-3">{data.days[1]}</p>
+              <p className="col-span-3">{data.guideName}</p>
             </div>
             <div className="grid grid-cols-4">
               <strong className="col-span-1 border-r mr-4">Client Name</strong>
-              <p className="col-span-3">{data.days[2]}</p>
+              <p className="col-span-3">{data.clientName}</p>
             </div>
             <div className="grid grid-cols-4">
               <strong className="col-span-1 border-r mr-4">Package</strong>
-              <p className="col-span-3">{data.days[3]}</p>
+              <div className="col-span-3 flex gap-2">
+                <p>{`${data.package}`}</p>
+                <div className="flex gap-1 items-center">
+                  <p>{`(`}</p>
+                  <PiCloudSunBold />
+                  <p>{`${numberOfDays}H${numberOfDays-1}M )`}</p>
+                </div>
+              </div>
             </div>
             <div className="grid grid-cols-4">
               <strong className="col-span-1 border-r mr-4">No of Pax</strong>
-              {data.days[4] && <p className="col-span-3">{formatPax(Number(data.days[4]))}</p>}
+              <p className="col-span-3">{formatPax(data.clientPax)}</p>
             </div>
             <div className="grid grid-cols-4">
               <strong className="col-span-1 border-r mr-4">
                 Flight Detail
               </strong>
-              <a href={data.days[5]} className="col-span-3 text-blue-700 underline">{`Flight detail - ${data.days[2]} (link)`}</a>
+              <a
+                href={data.flightLink}
+                className="col-span-3 text-blue-700 underline"
+              >{`Flight detail - ${data.clientName} (link)`}</a>
             </div>
           </div>
         </div>
@@ -92,19 +140,28 @@ export default function PDFPage() {
         <div className="mt-10 flex flex-col rounded-lg p-4 border border-gray-300">
           <p className="text-center font-bold border-b pb-4">Client Remark</p>
           <div
-            dangerouslySetInnerHTML={{ __html: data.days[6] }}
+            dangerouslySetInnerHTML={{ __html: data.remarks }}
             className="leading-5 pt-4 text-sm"
           />
         </div>
 
         <div className="mt-10 flex flex-col rounded-lg p-4 border border-gray-300">
           <p className="text-center font-bold border-b pb-4">Itenary Details</p>
-          {data[10] &&
-            Object.entries(data.days[10]).map(([key, value]) => (
-              <p key={key}>
-                <strong>Event {parseInt(key) + 1}:</strong> {value as string}
-              </p>
-            ))}
+          <div className="flex flex-col gap-4 mt-4">
+            {data.itenaryDetails &&
+              Object.entries(data.itenaryDetails).map(([key, value], index) => {
+                const currentDate = addDays(startDate, index);
+                return (
+                  <div key={key} className="flex">
+                    <div className="flex flex-col pr-4 border-r">
+                      <strong>Day {index + 1}</strong>
+                      <p className="text-[10px]">{`${formatDate(currentDate.toISOString())}`}</p>
+                    </div>
+                    <p className="pl-4">{value as string}</p>
+                  </div>
+                );
+              })}
+            </div>
         </div>
       </div>
     </div>
