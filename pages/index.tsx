@@ -78,7 +78,7 @@ export default function PDFPage() {
 
   return (
     <div className="overflow-hidden">
-      <div className="w-full max-w-[190mm] min-h-screen mx-auto p-[20mm] bg-white border border-gray-300 font-sans leading-relaxed">
+      <div className="w-full max-w-[190mm] min-h-screen mx-auto p-[20mm] bg-gray-50 border shadow-lg border-gray-300 font-sans leading-relaxed">
         {/* Header Banner and Logo */}
         <div className="relative top-[-20mm] left-[-20mm] w-[190mm]">
           <img
@@ -99,9 +99,9 @@ export default function PDFPage() {
 
         <div className="pt-10 flex flex-col gap-12">
           <h1 className="uppercase font-extrabold text-5xl">
-            Travel Itinerary
+            Guide Guideline
           </h1>
-          <div className="flex flex-col rounded-lg p-4 border border-gray-300">
+          <div className="flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
             <div className="grid grid-cols-4">
               <strong className="col-span-1 border-r mr-4">Guide Name</strong>
               <p className="col-span-3">{data.guideName}</p>
@@ -137,7 +137,7 @@ export default function PDFPage() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col rounded-lg p-4 border border-gray-300">
+        <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
           <p className="text-center font-bold border-b pb-4">Client Remark</p>
           <div
             dangerouslySetInnerHTML={{ __html: data.remarks }}
@@ -145,14 +145,22 @@ export default function PDFPage() {
           />
         </div>
 
-        <div className="mt-10 flex flex-col rounded-lg p-4 border border-gray-300">
+        <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
+          <p className="text-center font-bold border-b pb-4">Tickets</p>
+          <div
+            dangerouslySetInnerHTML={{ __html: data.remarks }}
+            className="leading-5 pt-4 text-sm"
+          />
+        </div>
+
+        <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
           <p className="text-center font-bold border-b pb-4">Itenary Details</p>
           <div className="flex flex-col gap-4 mt-4">
             {data.itenaryDetails &&
               Object.entries(data.itenaryDetails).map(([key, value], index) => {
                 const currentDate = addDays(startDate, index);
                 return (
-                  <div key={key} className="flex">
+                  <div key={key} className={`flex ${index !== 0 && "border-t pt-4"}`}>
                     <div className="flex flex-col pr-4 border-r">
                       <strong>Day {index + 1}</strong>
                       <p className="text-[10px]">{`${formatDate(currentDate.toISOString())}`}</p>
@@ -163,6 +171,15 @@ export default function PDFPage() {
               })}
             </div>
         </div>
+
+        <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
+          <p className="text-center font-bold border-b pb-4">Accomodation</p>
+          <div
+            dangerouslySetInnerHTML={{ __html: data.remarks }}
+            className="leading-5 pt-4 text-sm"
+          />
+        </div>
+
       </div>
     </div>
   );
