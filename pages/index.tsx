@@ -77,9 +77,19 @@ export default function PDFPage() {
     if (typeof rwdata === "string") {
       try {
         const parsedData = JSON.parse(decodeURIComponent(rwdata));
+        console.log("parsedData.accomodation:",parsedData.accomodation);
+        // Clean and parse the accomodation field
+        if (typeof parsedData.accomodation === "string") {
+          const cleanedAccomodation = parsedData.accomodation
+            .replace(/^\{ \("accommodations": \[\) - /, '{"accommodations": [')
+            .replace(/\(},\) - /g, '},')
+            .replace(/\n/g, '')
+            .replace(/ - /g, '');
+          parsedData.accomodation = JSON.parse(cleanedAccomodation);
+        }
+  
         setData(parsedData);
-        console.log("parsedData:", parsedData);
-        console.log("data.accomodation:", parsedData.accomodation);
+        console.log("Parsed Data:", parsedData); // Verify the structure
       } catch (error) {
         console.error("Failed to parse rwdata:", error);
       }
@@ -93,6 +103,8 @@ export default function PDFPage() {
   const numberOfDays =
     Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) +
     1;
+
+  console.log("data.accomodation:", data.accomodation);
 
   return (
     <div className="overflow-hidden">
@@ -240,10 +252,29 @@ export default function PDFPage() {
           <p className="text-center font-bold border-b pb-4">Accomodation</p>
           
           <div className="leading-5 pt-4 text-sm">
-            <div
+            
+            {data.accomodation?.accommodations?.map((accommodation, index) => (
+              <div key={index}>
+                <p>{accommodation.name}</p>
+                <p>{accommodation.link}</p>
+                <p>{accommodation.notes}</p>
+                {/* <div
+                  dangerouslySetInnerHTML={{ __html: accommodation.notes }}
+                  className="leading-5"
+                />
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: accommodation.notes.replace(/\n/g, '<br>'),
+                  }}
+                  className="leading-5"
+                /> */}
+              </div>
+            ))}
+
+            {/* <div
               dangerouslySetInnerHTML={{ __html: data.accomodation }}
               className="leading-5"
-            />
+            /> */}
           </div>
 
         </div>
