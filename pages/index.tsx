@@ -5,6 +5,11 @@ import { PiCloudSunBold } from "react-icons/pi";
 import { FaPerson, FaChild, FaBabyCarriage } from "react-icons/fa6";
 import MkjGeneralBriefing from "@/components/MkjGeneralBriefing";
 
+type Accommodation = {
+  name: string;
+  link: string;
+  notes: string;
+};
 type ItineraryData = {
   guideName: string;
   clientName: string;
@@ -15,9 +20,9 @@ type ItineraryData = {
   dateStart: string;
   dateEnd: string;
   itenaryDetails: { [key: string]: string };
-  // accomodation: string; // Add this line
-  accomodation: { accommodations: { name: string; link: string; notes: string }[] }; // Update this line
-  tickets: string; // Add this line
+  // accomodation: string;
+  accomodation: Accommodation[]; // Update to an array of Accommodation objects
+  tickets: string;
 };
 
 export default function PDFPage() {
@@ -78,17 +83,13 @@ export default function PDFPage() {
       try {
         const parsedData = JSON.parse(decodeURIComponent(rwdata));
         console.log("parsedData.accomodation:",parsedData.accomodation);
-        // Clean and parse the accomodation field
-        if (typeof parsedData.accomodation === "string") {
-          const cleanedAccomodation = parsedData.accomodation
-            .replace(/^\{ \("accommodations": \[\) - /, '{"accommodations": [')
-            .replace(/\(},\) - /g, '},')
-            .replace(/\n/g, '')
-            .replace(/ - /g, '');
-          parsedData.accomodation = JSON.parse(cleanedAccomodation);
-        }
-  
-        setData(parsedData);
+        // Parse the accomodation string into an array of objects
+        const accomodationArray = parsedData.accomodation.split(",,,").map((item: string) => {
+          const [name, link, notes] = item.split(",,");
+          return { name, link, notes };
+        });
+        setData({ ...parsedData, accomodation: accomodationArray });
+        // setData(parsedData);
         console.log("Parsed Data:", parsedData); // Verify the structure
       } catch (error) {
         console.error("Failed to parse rwdata:", error);
@@ -104,14 +105,12 @@ export default function PDFPage() {
     Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) +
     1;
 
-  console.log("data.accomodation:", data.accomodation);
-
   return (
     <div className="overflow-hidden">
-      <div className="w-full max-w-[190mm] min-h-screen mx-auto p-[20mm] bg-gray-50 border shadow-lg border-gray-300 font-sans leading-relaxed">
+      <div className="w-full max-w-[200mm] min-h-screen mx-auto p-[10mm] bg-gray-50 border shadow-lg border-gray-300 font-sans leading-relaxed">
       
         {/* Header Banner and Logo */}
-        <div className="relative top-[-20mm] left-[-20mm] w-[190mm]">
+        <div className="relative top-[-20mm] left-[-10mm] w-[200mm]">
           <img
             src="./header/topbanner.png"
             alt="banner"
@@ -124,7 +123,7 @@ export default function PDFPage() {
             alt="banner"
             width={100}
             height={100}
-            className="w-28 absolute top-20 right-20"
+            className="w-28 absolute top-20 right-10"
           />
         </div>
 
@@ -160,12 +159,12 @@ export default function PDFPage() {
               </strong>
               <div className="col-span-3">
                 {data.flightLink.split(", ").map((flight, index) => {
-                  const match = flight.match(/(.+?) \((https?:\/\/.+?)\)/);
+                  const match = flight.match(/(.+?) \((https?:\/\/.+?)\) \[(.+?)\]/);
                   if (match) {
-                    const [, name, link] = match;
+                    const [, name, link, type] = match;
                     return (
                       <div key={index}>
-                        <span>{`${name} - `}</span>
+                        <span>{`${type}: ${name} - `}</span>
                         <a
                           href={link}
                           className="text-blue-700 underline"
@@ -197,7 +196,7 @@ export default function PDFPage() {
         {/* Tickets */}
         <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
           <p className="text-center font-bold border-b pb-4">{`Tickets`}</p>
-          <div className="leading-5 pt-4 text-sm">
+          <div className="leading-5 pt-4 text-sm grid grid-cols-2 gap-4">
             {data.tickets.split(', ').map((ticket, index) => {
               // console.log(`Processing ticket: ${ticket}`); // Debugging line
               const match = ticket.match(/(.+?) \((.+?)\)/);
@@ -252,33 +251,23 @@ export default function PDFPage() {
           <p className="text-center font-bold border-b pb-4">Accomodation</p>
           
           <div className="leading-5 pt-4 text-sm">
-            
-            {data.accomodation?.accommodations?.map((accommodation, index) => (
-              <div key={index}>
-                <p>{accommodation.name}</p>
-                <p>{accommodation.link}</p>
-                <p>{accommodation.notes}</p>
-                {/* <div
-                  dangerouslySetInnerHTML={{ __html: accommodation.notes }}
-                  className="leading-5"
-                />
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: accommodation.notes.replace(/\n/g, '<br>'),
-                  }}
-                  className="leading-5"
-                /> */}
+            {data.accomodation.map((acc, index) => (
+              <div key={index} className="pb-5">
+                <p className="font-semibold">{`${index+1}. ${acc.name}`}</p>
+                <a href={acc.link} className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">
+                  {acc.link}
+                </a>
+                <div className="border rounded-lg shadow p-4 mt-4">
+                  <p className="font-bold underline pb-2">Notes</p>
+                  <div dangerouslySetInnerHTML={{ __html: acc.notes }} className="break-words"/>
+                </div>
               </div>
             ))}
-
-            {/* <div
-              dangerouslySetInnerHTML={{ __html: data.accomodation }}
-              className="leading-5"
-            /> */}
           </div>
 
         </div>
 
+        <hr className="my-10 "/>
         {/* MKJ General Briefing */}
         <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
           <p className="text-center font-bold border-b pb-4">MKJ General Briefing</p>
