@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PiCloudSunBold } from "react-icons/pi";
 import { FaPerson, FaChild, FaBabyCarriage } from "react-icons/fa6";
+import MkjGeneralBriefing from "@/components/MkjGeneralBriefing";
 
 type ItineraryData = {
   guideName: string;
@@ -14,7 +15,8 @@ type ItineraryData = {
   dateStart: string;
   dateEnd: string;
   itenaryDetails: { [key: string]: string };
-  accomodation: string; // Add this line
+  // accomodation: string; // Add this line
+  accomodation: { accommodations: { name: string; link: string; notes: string }[] }; // Update this line
   tickets: string; // Add this line
 };
 
@@ -51,7 +53,7 @@ export default function PDFPage() {
             </div>
           )}
         </div>
-        {`(${totalPax} pax)`}
+        <span>{`(${totalPax} pax)`}</span>
       </div>
     );
   };
@@ -77,6 +79,7 @@ export default function PDFPage() {
         const parsedData = JSON.parse(decodeURIComponent(rwdata));
         setData(parsedData);
         console.log("parsedData:", parsedData);
+        console.log("data.accomodation:", parsedData.accomodation);
       } catch (error) {
         console.error("Failed to parse rwdata:", error);
       }
@@ -91,11 +94,10 @@ export default function PDFPage() {
     Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) +
     1;
 
-  console.log("data.tickets:", data.tickets);
-
   return (
     <div className="overflow-hidden">
       <div className="w-full max-w-[190mm] min-h-screen mx-auto p-[20mm] bg-gray-50 border shadow-lg border-gray-300 font-sans leading-relaxed">
+      
         {/* Header Banner and Logo */}
         <div className="relative top-[-20mm] left-[-20mm] w-[190mm]">
           <img
@@ -110,7 +112,7 @@ export default function PDFPage() {
             alt="banner"
             width={100}
             height={100}
-            className="w-28 absolute top-28 right-20"
+            className="w-28 absolute top-20 right-20"
           />
         </div>
 
@@ -144,26 +146,21 @@ export default function PDFPage() {
               <strong className="col-span-1 border-r mr-4">
                 Flight Detail
               </strong>
-              {/* <a
-                href={data.flightLink}
-                className="col-span-3 text-blue-700 underline"
-              >{`Flight detail - ${data.clientName} (link)`}</a> */}
-              {/* <p className="col-span-3">{data.flightLink}</p> */}
               <div className="col-span-3">
                 {data.flightLink.split(", ").map((flight, index) => {
                   const match = flight.match(/(.+?) \((https?:\/\/.+?)\)/);
                   if (match) {
-                    const [ name, link] = match;
+                    const [, name, link] = match;
                     return (
                       <div key={index}>
-                        <span>{`${name} `}</span>
+                        <span>{`${name} - `}</span>
                         <a
                           href={link}
                           className="text-blue-700 underline"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                        {`( link )`}
+                          {`link`}
                         </a>
                       </div>
                     );
@@ -187,24 +184,23 @@ export default function PDFPage() {
 
         {/* Tickets */}
         <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
-          <p className="text-center font-bold border-b pb-4">Tickets</p>
-          {/* <p className="leading-5 pt-4 text-sm">{data.tickets}</p> */}
+          <p className="text-center font-bold border-b pb-4">{`Tickets`}</p>
           <div className="leading-5 pt-4 text-sm">
             {data.tickets.split(', ').map((ticket, index) => {
-              console.log(`Processing ticket: ${ticket}`); // Debugging line
+              // console.log(`Processing ticket: ${ticket}`); // Debugging line
               const match = ticket.match(/(.+?) \((.+?)\)/);
               if (match) {
-                const [ name, link] = match;
+                const [, name, link] = match;
                 return (
                   <div key={index}>
-                    <span>{`${name} `}</span>
+                    <span>{`${name} - `}</span>
                     <a
                       href={link}
                       className="text-blue-700 underline"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {`( link )`}
+                      {`link`}
                     </a>
                   </div>
                 );
@@ -239,39 +235,24 @@ export default function PDFPage() {
           </div>
         </div>
 
-        {/* <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
-          <p className="text-center font-bold border-b pb-4">Accomodation</p>
-          <div
-            dangerouslySetInnerHTML={{ __html: data.remarks }}
-            className="leading-5 pt-4 text-sm"
-          />
-        </div> */}
         {/* Accomodation */}
         <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
           <p className="text-center font-bold border-b pb-4">Accomodation</p>
-          <p className="leading-5 pt-4 text-sm">{data.accomodation}</p>
+          
           <div className="leading-5 pt-4 text-sm">
-            {data.accomodation.split(', ').map((accomodation, index) => {
-              console.log(`Processing ticket: ${accomodation}`); // Debugging line
-              const match = accomodation.match(/(.+?) \((.+?)\)/);
-              if (match) {
-                const [ name, link] = match;
-                return (
-                  <div key={index}>
-                    <span>{`${name} `}</span>
-                    <a
-                      href={link}
-                      className="text-blue-700 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {`( link )`}
-                    </a>
-                  </div>
-                );
-              }
-              return null; // Skip entries that don't match
-            })}
+            <div
+              dangerouslySetInnerHTML={{ __html: data.accomodation }}
+              className="leading-5"
+            />
+          </div>
+
+        </div>
+
+        {/* MKJ General Briefing */}
+        <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
+          <p className="text-center font-bold border-b pb-4">MKJ General Briefing</p>
+          <div className="leading-5 text-sm ">
+            <MkjGeneralBriefing/>
           </div>
         </div>
       </div>
