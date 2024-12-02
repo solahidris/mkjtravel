@@ -2,7 +2,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PiCloudSunBold } from "react-icons/pi";
-import { FaPerson, FaChild, FaBabyCarriage } from "react-icons/fa6";
+import { FaPerson, FaChild, FaBabyCarriage, FaPlaneDeparture, FaPlaneArrival } from "react-icons/fa6";
 import MkjGeneralBriefing from "@/components/MkjGeneralBriefing";
 
 type Accommodation = {
@@ -107,12 +107,32 @@ export default function PDFPage() {
 
   return (
     <div className="overflow-hidden">
-      <div className="w-full max-w-[200mm] min-h-screen mx-auto p-[10mm] bg-gray-50 border shadow-lg border-gray-300 font-sans leading-relaxed">
+      <div className="w-full max-w-[200mm] min-h-screen mx-auto my-10 p-[10mm] bg-gray-50 border shadow-lg border-gray-300 font-sans leading-relaxed">
       
         {/* Header Banner and Logo */}
-        <div className="relative top-[-20mm] left-[-10mm] w-[200mm]">
+        <div className="relative top-[-60mm] left-[-10mm] w-[200mm] z-10 rounded-t-lg">
+          <img
+            src="./header/shibuya.png"
+            // src="./header/doraemon.png"
+            alt="banner"
+            width={100}
+            height={100}
+            className="w-full absolute top-0 left-0 opacity-90 max-h-[320px] mt-[190px] object-bottom object-cover"
+          />
+        </div>
+        <div className="relative top-[-60mm] left-[-10mm] w-[200mm] z-20">
+          <img
+            src="./header/logo.png"
+            alt="banner"
+            width={100}
+            height={100}
+            className="w-20 absolute top-[200px] right-10 rounded-lg"
+          />
+        </div>
+        {/* <div className="relative top-[-20mm] left-[-10mm] w-[200mm] z-10">
           <img
             src="./header/topbanner.png"
+            // src="./header/doraemon.png"
             alt="banner"
             width={100}
             height={100}
@@ -125,11 +145,12 @@ export default function PDFPage() {
             height={100}
             className="w-28 absolute top-20 right-10"
           />
-        </div>
+        </div> */}
 
-        <div className="pt-10 flex flex-col gap-12">
-          <h1 className="uppercase font-extrabold text-5xl">Guide Guideline</h1>
-          <div className="flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
+        <div className="pt-20 flex flex-col gap-12">
+        <h1 className="uppercase font-extrabold text-5xl text-white z-20" style={{ textShadow: '#4b5563 1px 0 10px' }}>Guide Guideline</h1>
+          {/* <h1 className="uppercase font-extrabold text-5xl">Guide Guideline</h1> */}
+          <div className="flex flex-col gap-2 rounded-lg p-4 border shadow-md bg-white border-gray-300 z-20">
             <div className="grid grid-cols-4">
               <strong className="col-span-1 border-r mr-4">Guide Name</strong>
               <p className="col-span-3">{data.guideName}</p>
@@ -157,14 +178,20 @@ export default function PDFPage() {
               <strong className="col-span-1 border-r mr-4">
                 Flight Detail
               </strong>
-              <div className="col-span-3">
+              <div className="col-span-3 flex flex-col gap-2">
                 {data.flightLink.split(", ").map((flight, index) => {
                   const match = flight.match(/(.+?) \((https?:\/\/.+?)\) \[(.+?)\]/);
                   if (match) {
                     const [, name, link, type] = match;
                     return (
-                      <div key={index}>
-                        <span>{`${type}: ${name} - `}</span>
+                      <div key={index} className={`flex gap-1 ${type === "Departure Domestic" && "border-t py-2 mt-2"}`}>
+                        <div className="flex gap-2 items-center">
+                          {type === "Departure" && <FaPlaneDeparture />}
+                          {type === "Return" && <FaPlaneArrival />}
+                          {type === "Departure Domestic" && <FaPlaneDeparture />}
+                          {type === "Return Domestic" && <FaPlaneArrival />}
+                          <span>{`${type}: ${name} -`}</span>
+                        </div>
                         <a
                           href={link}
                           className="text-blue-700 underline"
@@ -268,13 +295,30 @@ export default function PDFPage() {
         </div>
 
         <hr className="my-10 "/>
+
         {/* MKJ General Briefing */}
-        <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
-          <p className="text-center font-bold border-b pb-4">MKJ General Briefing</p>
-          <div className="leading-5 text-sm ">
-            <MkjGeneralBriefing/>
+        <div className="relative pb-[120px]">
+          {/* REMOVE FOOTER - 1  */}
+          <div className="mt-10 mb-40 flex flex-col p-4 border shadow-md bg-white border-gray-300 relative z-10">
+          {/* <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300 relative z-10"> */}
+            <p className="text-center font-bold border-b pb-4">MKJ General Briefing</p>
+            <div className="leading-5 text-sm">
+              <MkjGeneralBriefing/>
+            </div>
           </div>
+
+          {/* REMOVE FOOTER - 2 */}
+          {/* Footer Banner and Logo */}
+          <div className="absolute -bottom-100 -left-[10mm] w-full min-w-[200mm] z-0">
+            <img
+              src="./footer/slamdunk.png"
+              alt="banner"
+              className="w-full opacity-100 -mt-[240px] max-h-[404px] object-cover object-top"
+            />
+          </div>
+
         </div>
+
       </div>
     </div>
   );
