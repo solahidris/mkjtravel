@@ -162,8 +162,8 @@ const MkjGeneralBriefing = () => {
 
       <h2 className="font-bold pt-8">9. THE BEGINNING</h2>
       <p>
-        9.1 Jika anda telah membaca sampai disini, sila wasap Haris dengan
-        codeword [saya janji saya akan lakukan yang terbaik].
+        9.1 Jika anda telah membaca sampai disini, sila wasap Hariz dengan
+        codeword <br/><strong className="uppercase">[saya janji saya akan lakukan yang terbaik]</strong >.
       </p>
     </div>
   );
