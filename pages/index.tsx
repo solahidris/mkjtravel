@@ -106,7 +106,18 @@ export default function PDFPage() {
     }
   }, [rwdata]);
 
-  if (!data) return <p>Loading...</p>;
+  if (!data) return (
+    <div className="flex flex-col gap-4 items-center justify-center min-h-screen w-full bg-[#0b195a] text-white">
+      <img
+        src="./header/mkjlogo.png"
+        alt="mkjlogo"
+        width={100}
+        height={100}
+        className="w-28 lg:w-40"
+      />
+      <p className="font-mono">Loading...</p>
+    </div>
+  )
 
   const startDate = new Date(data.dateStart);
   const endDate = new Date(data.dateEnd);
