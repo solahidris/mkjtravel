@@ -206,7 +206,7 @@ export default function PDFPage() {
                   if (match) {
                     const [, name, link, type] = match;
                     return (
-                      <div key={index} className={`flex gap-1 ${type === "Departure Domestic" && "border-t border-gray-500  py-2 mt-2"}`}>
+                      <div key={index} className={`flex gap-1 ${type === "Departure Domestic" && "border-t border-gray-400  py-2 mt-2"}`}>
                         <div className="flex gap-2 items-center">
                           {type === "Departure" && <FaPlaneDeparture />}
                           {type === "Return" && <FaPlaneArrival />}
@@ -235,7 +235,7 @@ export default function PDFPage() {
 
         {/* Client Remarks */}
         <div className="mt-10 flex flex-col rounded-lg p-4 bg-white ">
-          <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+          <div className="flex items-center justify-center pb-4 border-b border-gray-400 gap-2">
             <FaNoteSticky/>
             <p className="text-center font-bold">Client Remark</p>
           </div>
@@ -247,7 +247,7 @@ export default function PDFPage() {
 
         {/* Tickets */}
         <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
-          <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+          <div className="flex items-center justify-center pb-4 border-b border-gray-400 gap-2">
             <IoTicket />
             <p className="text-center font-bold">Tickets</p>
           </div>
@@ -278,7 +278,7 @@ export default function PDFPage() {
         </div>
 
         <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
-          <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+          <div className="flex items-center justify-center pb-4 border-b border-gray-400 gap-2">
             <FaCalendar />
             <p className="text-center font-bold">Itenary Details</p>
           </div>
@@ -289,9 +289,9 @@ export default function PDFPage() {
                 return (
                   <div
                     key={key}
-                    className={`flex ${index !== 0 && "border-t border-gray-500  pt-4"}`}
+                    className={`flex ${index !== 0 && "border-t border-gray-400  pt-4"}`}
                   >
-                    <div className="flex flex-col pr-4 border-r border-gray-500 ">
+                    <div className="flex flex-col pr-4 border-r border-gray-400 ">
                       <strong className="min-w-[46px]">Day {index + 1}</strong>
                       <p className="text-[10px]">{`${formatDate(
                         currentDate.toISOString()
@@ -306,7 +306,7 @@ export default function PDFPage() {
 
         {/* Accomodation */}
         <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
-          <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+          <div className="flex items-center justify-center pb-4 border-b border-gray-400 gap-2">
             <FaHouse />
             <p className="text-center font-bold">Accomodation</p>
           </div>
@@ -318,7 +318,7 @@ export default function PDFPage() {
                 <a href={acc.link} className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">
                   {acc.link}
                 </a>
-                <div className="border border-gray-500 rounded-lg drop-shadow-md p-4 mt-4">
+                <div className="border border-gray-400 rounded-lg drop-shadow-md p-4 mt-4">
                   <p className="font-bold underline pb-2">Notes</p>
                   <div dangerouslySetInnerHTML={{ __html: acc.notes }} className="break-words"/>
                 </div>
@@ -330,7 +330,7 @@ export default function PDFPage() {
 
         {/* Transportation */}
         <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
-          <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+          <div className="flex items-center justify-center pb-4 border-b border-gray-400 gap-2">
             <FaCar />
             <p className="text-center font-bold">Transportation</p>
           </div>
@@ -342,7 +342,7 @@ export default function PDFPage() {
                 <a href={acc.link} className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">
                   {acc.link}
                 </a>
-                <div className="border border-gray-500 rounded-lg drop-shadow-md p-4 mt-4">
+                <div className="border border-gray-400 rounded-lg drop-shadow-md p-4 mt-4">
                   <p className="font-bold underline pb-2">Notes</p>
                   <div dangerouslySetInnerHTML={{ __html: acc.notes }} className="break-words" />
                 </div>
@@ -359,7 +359,7 @@ export default function PDFPage() {
           {/* REMOVE FOOTER - 1  */}
           <div className="mt-10 mb-0 flex flex-col p-4 bg-white rounded-lg relative z-10">
           {/* <div className="mt-10 flex flex-col rounded-lg p-4  bg-white  relative z-10"> */}
-            <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+            <div className="flex items-center justify-center pb-4 border-b border-gray-400 gap-2">
               <FaStar />
               <p className="text-center font-bold">MKJ General Briefing</p>
             </div>
