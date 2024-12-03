@@ -107,7 +107,7 @@ export default function PDFPage() {
 
   return (
     <div className="overflow-hidden">
-      <div className="w-full max-w-[200mm] min-h-screen mx-auto my-10 p-[10mm] bg-gray-50 border shadow-lg border-gray-300 font-sans leading-relaxed">
+      <div className="w-full max-w-[200mm] min-h-screen mx-auto lg:my-10 p-[6mm] lg:p-[10mm] bg-[#0b195a] shadow-lg  font-sans leading-relaxed">
       
         {/* Header Banner and Logo */}
         <div className="relative top-[-60mm] left-[-10mm] w-[200mm] z-10 rounded-t-lg">
@@ -120,13 +120,14 @@ export default function PDFPage() {
             className="w-full absolute top-0 left-0 opacity-90 max-h-[320px] mt-[190px] object-bottom object-cover"
           />
         </div>
-        <div className="relative top-[-60mm] left-[-10mm] w-[200mm] z-20">
+
+        <div className="relative z-20">
           <img
-            src="./header/logo.png"
-            alt="banner"
+            src="./header/mkjlogo.png"
+            alt="mkjlogo"
             width={100}
             height={100}
-            className="w-20 absolute top-[200px] right-10 rounded-lg"
+            className="w-28 lg:w-40 absolute top-0 right-0 rounded-lg"
           />
         </div>
         {/* <div className="relative top-[-20mm] left-[-10mm] w-[200mm] z-10">
@@ -147,20 +148,21 @@ export default function PDFPage() {
           />
         </div> */}
 
-        <div className="pt-20 flex flex-col gap-12">
-        <h1 className="uppercase font-extrabold text-5xl text-white z-20" style={{ textShadow: '#4b5563 1px 0 10px' }}>Guide Guideline</h1>
+        <div className="pt-10 lg:pt-20 flex flex-col gap-12">
+        <div className="bg-gradient-to-t from-[#0b195a] to-transparent max-w-[99vw] w-full lg:w-[200mm] mt-[100px] lg:mt-[50px] -ml-[22px] lg:-ml-[38px] absolute min-h-[160px] z-20"/>
+        <h1 className="uppercase font-extrabold text-6xl text-white text-center z-20" style={{ textShadow: '#000000 10px 4px 10px' }}>Guide Guideline</h1>
           {/* <h1 className="uppercase font-extrabold text-5xl">Guide Guideline</h1> */}
-          <div className="flex flex-col gap-2 rounded-lg p-4 border shadow-md bg-white border-gray-300 z-20">
-            <div className="grid grid-cols-4">
-              <strong className="col-span-1 border-r mr-4">Guide Name</strong>
+          <div className="flex flex-col gap-2 rounded-lg p-4  bg-white text-sm lg:text-base z-20">
+            <div className="flex">
+              <strong className="pr-2">Guide Name:</strong>
               <p className="col-span-3">{data.guideName}</p>
             </div>
-            <div className="grid grid-cols-4">
-              <strong className="col-span-1 border-r mr-4">Client Name</strong>
+            <div className="flex">
+              <strong className="pr-2">Client Name:</strong>
               <p className="col-span-3">{data.clientName}</p>
             </div>
-            <div className="grid grid-cols-4">
-              <strong className="col-span-1 border-r mr-4">Package</strong>
+            <div className="flex">
+              <strong className="pr-2">Package:</strong>
               <div className="col-span-3 flex gap-2">
                 <p>{`${data.package}`}</p>
                 <div className="flex gap-1 items-center">
@@ -170,21 +172,21 @@ export default function PDFPage() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-4">
-              <strong className="col-span-1 border-r mr-4">No of Pax</strong>
-              <p className="col-span-3">{formatPax(data.clientPax)}</p>
+            <div className="flex gap-2">
+              <strong className="">No of Pax:</strong>
+              <p className="">{formatPax(data.clientPax)}</p>
             </div>
-            <div className="grid grid-cols-4">
-              <strong className="col-span-1 border-r mr-4">
-                Flight Detail
+            <div className="flex lg:flex-row flex-col gap-2">
+              <strong className="">
+                Flight Detail:
               </strong>
-              <div className="col-span-3 flex flex-col gap-2">
+              <div className="flex flex-col gap-2">
                 {data.flightLink.split(", ").map((flight, index) => {
                   const match = flight.match(/(.+?) \((https?:\/\/.+?)\) \[(.+?)\]/);
                   if (match) {
                     const [, name, link, type] = match;
                     return (
-                      <div key={index} className={`flex gap-1 ${type === "Departure Domestic" && "border-t py-2 mt-2"}`}>
+                      <div key={index} className={`flex gap-1 ${type === "Departure Domestic" && "border-t border-gray-500  py-2 mt-2"}`}>
                         <div className="flex gap-2 items-center">
                           {type === "Departure" && <FaPlaneDeparture />}
                           {type === "Return" && <FaPlaneArrival />}
@@ -212,8 +214,8 @@ export default function PDFPage() {
         </div>
 
         {/* Client Remarks */}
-        <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
-          <p className="text-center font-bold border-b pb-4">Client Remark</p>
+        <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
+          <p className="text-center font-bold border-b border-gray-500 pb-4">Client Remark</p>
           <div
             dangerouslySetInnerHTML={{ __html: data.remarks }}
             className="leading-5 pt-4 text-sm"
@@ -221,8 +223,8 @@ export default function PDFPage() {
         </div>
 
         {/* Tickets */}
-        <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
-          <p className="text-center font-bold border-b pb-4">{`Tickets`}</p>
+        <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
+          <p className="text-center font-bold border-b border-gray-500 pb-4">{`Tickets`}</p>
           <div className="leading-5 pt-4 text-sm grid grid-cols-2 gap-4">
             {data.tickets.split(', ').map((ticket, index) => {
               // console.log(`Processing ticket: ${ticket}`); // Debugging line
@@ -249,8 +251,8 @@ export default function PDFPage() {
 
         </div>
 
-        <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
-          <p className="text-center font-bold border-b pb-4">Itenary Details</p>
+        <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
+          <p className="text-center font-bold border-b border-gray-500 pb-4">Itenary Details</p>
           <div className="flex flex-col gap-4 mt-4">
             {data.itenaryDetails &&
               Object.entries(data.itenaryDetails).map(([key, value], index) => {
@@ -258,15 +260,15 @@ export default function PDFPage() {
                 return (
                   <div
                     key={key}
-                    className={`flex ${index !== 0 && "border-t pt-4"}`}
+                    className={`flex ${index !== 0 && "border-t border-gray-500  pt-4"}`}
                   >
-                    <div className="flex flex-col pr-4 border-r">
-                      <strong>Day {index + 1}</strong>
+                    <div className="flex flex-col pr-4 border-r border-gray-500 ">
+                      <strong className="min-w-[46px]">Day {index + 1}</strong>
                       <p className="text-[10px]">{`${formatDate(
                         currentDate.toISOString()
                       )}`}</p>
                     </div>
-                    <p className="pl-4">{value as string}</p>
+                    <p className="pl-4 text-sm">{value as string}</p>
                   </div>
                 );
               })}
@@ -274,8 +276,8 @@ export default function PDFPage() {
         </div>
 
         {/* Accomodation */}
-        <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300">
-          <p className="text-center font-bold border-b pb-4">Accomodation</p>
+        <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
+          <p className="text-center font-bold border-b border-gray-500 pb-4">Accomodation</p>
           
           <div className="leading-5 pt-4 text-sm">
             {data.accomodation.map((acc, index) => (
@@ -284,7 +286,7 @@ export default function PDFPage() {
                 <a href={acc.link} className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">
                   {acc.link}
                 </a>
-                <div className="border rounded-lg shadow p-4 mt-4">
+                <div className="border border-gray-500 rounded-lg drop-shadow-md p-4 mt-4">
                   <p className="font-bold underline pb-2">Notes</p>
                   <div dangerouslySetInnerHTML={{ __html: acc.notes }} className="break-words"/>
                 </div>
@@ -294,26 +296,26 @@ export default function PDFPage() {
 
         </div>
 
-        <hr className="my-10 "/>
+        <hr className="my-10 border-cyan-300 border-[1.5px]"/>
 
         {/* MKJ General Briefing */}
-        <div className="relative pb-[120px]">
+        <div className="relative">
           {/* REMOVE FOOTER - 1  */}
-          <div className="mt-10 mb-40 flex flex-col p-4 border shadow-md bg-white border-gray-300 relative z-10">
-          {/* <div className="mt-10 flex flex-col rounded-lg p-4 border shadow-md bg-white border-gray-300 relative z-10"> */}
-            <p className="text-center font-bold border-b pb-4">MKJ General Briefing</p>
-            <div className="leading-5 text-sm">
+          <div className="mt-10 mb-0 flex flex-col p-4 bg-white rounded-lg relative z-10">
+          {/* <div className="mt-10 flex flex-col rounded-lg p-4  bg-white  relative z-10"> */}
+            <p className="text-center font-bold border-b border-gray-500 pb-4">MKJ General Briefing</p>
+            <div className="leading-5 text-sm rounded-lg">
               <MkjGeneralBriefing/>
             </div>
           </div>
 
           {/* REMOVE FOOTER - 2 */}
           {/* Footer Banner and Logo */}
-          <div className="absolute -bottom-100 -left-[10mm] w-full min-w-[200mm] z-0">
+          <div className="absolute min-w-[200mm] z-0 -ml-[10mm] -mt-[157.79px]">
             <img
-              src="./footer/slamdunk.png"
+              src="./footer/cyan.png"
               alt="banner"
-              className="w-full opacity-100 -mt-[240px] max-h-[404px] object-cover object-top"
+              className="w-full opacity-100"
             />
           </div>
 
