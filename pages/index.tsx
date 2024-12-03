@@ -2,7 +2,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { PiCloudSunBold } from "react-icons/pi";
-import { FaPerson, FaChild, FaBabyCarriage, FaPlaneDeparture, FaPlaneArrival } from "react-icons/fa6";
+import { IoTicket } from "react-icons/io5";
+import { FaPerson, FaChild, FaBabyCarriage, FaPlaneDeparture, FaPlaneArrival, FaNoteSticky, FaCalendar, FaHouse, FaCar, FaStar } from "react-icons/fa6";
 import MkjGeneralBriefing from "@/components/MkjGeneralBriefing";
 
 type Accommodation = {
@@ -22,6 +23,7 @@ type ItineraryData = {
   itenaryDetails: { [key: string]: string };
   // accomodation: string;
   accomodation: Accommodation[]; // Update to an array of Accommodation objects
+  transportation: Accommodation[]; // Update to an array of Transportation objects
   tickets: string;
 };
 
@@ -82,14 +84,21 @@ export default function PDFPage() {
     if (typeof rwdata === "string") {
       try {
         const parsedData = JSON.parse(decodeURIComponent(rwdata));
-        console.log("parsedData.accomodation:",parsedData.accomodation);
+        console.log("parsedData.accomodation:", parsedData.accomodation);
+  
         // Parse the accomodation string into an array of objects
         const accomodationArray = parsedData.accomodation.split(",,,").map((item: string) => {
           const [name, link, notes] = item.split(",,");
           return { name, link, notes };
         });
-        setData({ ...parsedData, accomodation: accomodationArray });
-        // setData(parsedData);
+  
+        // Parse the transportation string into an array of objects
+        const transportationArray = parsedData.transportation.split(",,,").map((item: string) => {
+          const [name, link, notes] = item.split(",,");
+          return { name, link, notes };
+        });
+  
+        setData({ ...parsedData, accomodation: accomodationArray, transportation: transportationArray });
         console.log("Parsed Data:", parsedData); // Verify the structure
       } catch (error) {
         console.error("Failed to parse rwdata:", error);
@@ -214,8 +223,11 @@ export default function PDFPage() {
         </div>
 
         {/* Client Remarks */}
-        <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
-          <p className="text-center font-bold border-b border-gray-500 pb-4">Client Remark</p>
+        <div className="mt-10 flex flex-col rounded-lg p-4 bg-white ">
+          <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+            <FaNoteSticky/>
+            <p className="text-center font-bold">Client Remark</p>
+          </div>
           <div
             dangerouslySetInnerHTML={{ __html: data.remarks }}
             className="leading-5 pt-4 text-sm"
@@ -224,7 +236,10 @@ export default function PDFPage() {
 
         {/* Tickets */}
         <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
-          <p className="text-center font-bold border-b border-gray-500 pb-4">{`Tickets`}</p>
+          <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+            <IoTicket />
+            <p className="text-center font-bold">Tickets</p>
+          </div>
           <div className="leading-5 pt-4 text-sm grid grid-cols-2 gap-4">
             {data.tickets.split(', ').map((ticket, index) => {
               // console.log(`Processing ticket: ${ticket}`); // Debugging line
@@ -252,7 +267,10 @@ export default function PDFPage() {
         </div>
 
         <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
-          <p className="text-center font-bold border-b border-gray-500 pb-4">Itenary Details</p>
+          <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+            <FaCalendar />
+            <p className="text-center font-bold">Itenary Details</p>
+          </div>
           <div className="flex flex-col gap-4 mt-4">
             {data.itenaryDetails &&
               Object.entries(data.itenaryDetails).map(([key, value], index) => {
@@ -277,7 +295,10 @@ export default function PDFPage() {
 
         {/* Accomodation */}
         <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
-          <p className="text-center font-bold border-b border-gray-500 pb-4">Accomodation</p>
+          <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+            <FaHouse />
+            <p className="text-center font-bold">Accomodation</p>
+          </div>
           
           <div className="leading-5 pt-4 text-sm">
             {data.accomodation.map((acc, index) => (
@@ -296,6 +317,30 @@ export default function PDFPage() {
 
         </div>
 
+        {/* Transportation */}
+        <div className="mt-10 flex flex-col rounded-lg p-4  bg-white ">
+          <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+            <FaCar />
+            <p className="text-center font-bold">Transportation</p>
+          </div>
+          
+          <div className="leading-5 pt-4 text-sm">
+            {Array.isArray(data.transportation) && data.transportation.map((acc, index) => (
+              <div key={index} className="pb-5">
+                <p className="font-semibold">{`${index + 1}. ${acc.name}`}</p>
+                <a href={acc.link} className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">
+                  {acc.link}
+                </a>
+                <div className="border border-gray-500 rounded-lg drop-shadow-md p-4 mt-4">
+                  <p className="font-bold underline pb-2">Notes</p>
+                  <div dangerouslySetInnerHTML={{ __html: acc.notes }} className="break-words" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
         <hr className="my-10 border-cyan-300 border-[1.5px]"/>
 
         {/* MKJ General Briefing */}
@@ -303,7 +348,10 @@ export default function PDFPage() {
           {/* REMOVE FOOTER - 1  */}
           <div className="mt-10 mb-0 flex flex-col p-4 bg-white rounded-lg relative z-10">
           {/* <div className="mt-10 flex flex-col rounded-lg p-4  bg-white  relative z-10"> */}
-            <p className="text-center font-bold border-b border-gray-500 pb-4">MKJ General Briefing</p>
+            <div className="flex items-center justify-center pb-4 border-b border-gray-500 gap-2">
+              <FaStar />
+              <p className="text-center font-bold">MKJ General Briefing</p>
+            </div>
             <div className="leading-5 text-sm rounded-lg">
               <MkjGeneralBriefing/>
             </div>
