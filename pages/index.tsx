@@ -41,7 +41,7 @@ export default function PDFPage() {
     const [adults, children, infants] = paxString.split("").map(Number);
     const totalPax = adults + children + infants;
     return (
-      <div className="flex gap-4">
+      <div className="flex gap-2">
         <div className="flex gap-2 font-medium">
           <div className="flex items-center gap-0.5">
             {`${adults}`}
@@ -87,13 +87,13 @@ export default function PDFPage() {
         console.log("parsedData.accomodation:", parsedData.accomodation);
   
         // Parse the accomodation string into an array of objects
-        const accomodationArray = parsedData.accomodation.split(",,,").map((item: string) => {
+        const accomodationArray = parsedData.accomodation.split("<<<").map((item: string) => {
           const [name, link, notes] = item.split(",,");
           return { name, link, notes };
         });
   
         // Parse the transportation string into an array of objects
-        const transportationArray = parsedData.transportation.split(",,,").map((item: string) => {
+        const transportationArray = parsedData.transportation.split("<<<").map((item: string) => {
           const [name, link, notes] = item.split(",,");
           return { name, link, notes };
         });
@@ -174,15 +174,15 @@ export default function PDFPage() {
           {/* <h1 className="uppercase font-extrabold text-5xl">Guide Guideline</h1> */}
           <div className="flex flex-col gap-2 rounded-lg p-4  bg-white text-sm lg:text-base z-20">
             <div className="flex">
-              <strong className="pr-2">Guide Name:</strong>
+              <strong className="pr-2 min-w-[97px] lg:min-w-[108px]">Guide Name:</strong>
               <p className="col-span-3">{data.guideName}</p>
             </div>
             <div className="flex">
-              <strong className="pr-2">Client Name:</strong>
+              <strong className="pr-2 min-w-[97px] lg:min-w-[108px]">Client Name:</strong>
               <p className="col-span-3">{data.clientName}</p>
             </div>
             <div className="flex">
-              <strong className="pr-2">Package:</strong>
+              <strong className="pr-2 min-w-[97px] lg:min-w-[108px]">Package:</strong>
               <div className="col-span-3 flex gap-2">
                 <p>{`${data.package}`}</p>
                 <div className="flex gap-1 items-center">
@@ -193,7 +193,7 @@ export default function PDFPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <strong className="">No of Pax:</strong>
+              <strong className="min-w-[89px] lg:min-w-[100px]">No of Pax:</strong>
               <p className="">{formatPax(data.clientPax)}</p>
             </div>
             <div className="flex lg:flex-row flex-col gap-2">
@@ -206,12 +206,12 @@ export default function PDFPage() {
                   if (match) {
                     const [, name, link, type] = match;
                     return (
-                      <div key={index} className={`flex gap-1 ${type === "Departure Domestic" && "border-t border-gray-400  py-2 mt-2"}`}>
+                      <div key={index} className={`flex gap-1 ${type === "Domestic Departure" && "border-t border-gray-400 pt-2 mt-2"}`}>
                         <div className="flex gap-2 items-center">
                           {type === "Departure" && <FaPlaneDeparture />}
                           {type === "Return" && <FaPlaneArrival />}
-                          {type === "Departure Domestic" && <FaPlaneDeparture />}
-                          {type === "Return Domestic" && <FaPlaneArrival />}
+                          {type === "Domestic Departure" && <FaPlaneDeparture />}
+                          {type === "Domestic Return" && <FaPlaneArrival />}
                           <span>{`${type}: ${name} -`}</span>
                         </div>
                         <a
@@ -310,20 +310,21 @@ export default function PDFPage() {
             <FaHouse />
             <p className="text-center font-bold">Accomodation</p>
           </div>
-          
           <div className="leading-5 pt-4 text-sm">
-            {data.accomodation.map((acc, index) => (
-              <div key={index} className="pb-5">
-                <p className="font-semibold">{`${index+1}. ${acc.name}`}</p>
-                <a href={acc.link} className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">
-                  {acc.link}
-                </a>
-                <div className="border border-gray-400 rounded-lg drop-shadow-md p-4 mt-4">
-                  <p className="font-bold underline pb-2">Notes</p>
-                  <div dangerouslySetInnerHTML={{ __html: acc.notes }} className="break-words"/>
+            {Array.isArray(data.accomodation) && data.accomodation
+              .filter(acc => acc.name || acc.link || acc.notes) // Filter out empty entries
+              .map((acc, index) => (
+                <div key={index} className="pb-5">
+                  <p className="font-semibold">{`${index + 1}. ${acc.name}`}</p>
+                  <a href={acc.link} className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">
+                    {acc.link}
+                  </a>
+                  <div className="border border-gray-400 rounded-lg drop-shadow-md p-4 mt-4">
+                    <p className="font-bold underline pb-2">Notes</p>
+                    <div dangerouslySetInnerHTML={{ __html: acc.notes }} className="break-words" />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
 
         </div>
@@ -336,18 +337,20 @@ export default function PDFPage() {
           </div>
           
           <div className="leading-5 pt-4 text-sm">
-            {Array.isArray(data.transportation) && data.transportation.map((acc, index) => (
-              <div key={index} className="pb-5">
-                <p className="font-semibold">{`${index + 1}. ${acc.name}`}</p>
-                <a href={acc.link} className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">
-                  {acc.link}
-                </a>
-                <div className="border border-gray-400 rounded-lg drop-shadow-md p-4 mt-4">
-                  <p className="font-bold underline pb-2">Notes</p>
-                  <div dangerouslySetInnerHTML={{ __html: acc.notes }} className="break-words" />
+            {Array.isArray(data.transportation) && data.transportation
+              .filter(acc => acc.name || acc.link || acc.notes) // Filter out empty entries
+              .map((acc, index) => (
+                <div key={index} className="pb-5">
+                  <p className="font-semibold">{`${index + 1}. ${acc.name}`}</p>
+                  <a href={acc.link} className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">
+                    {acc.link}
+                  </a>
+                  <div className="border border-gray-400 rounded-lg drop-shadow-md p-4 mt-4">
+                    <p className="font-bold underline pb-2">Notes</p>
+                    <div dangerouslySetInnerHTML={{ __html: acc.notes }} className="break-words" />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
 
         </div>
